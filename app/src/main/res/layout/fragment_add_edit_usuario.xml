@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:descendantFocusability="beforeDescendants"
+android:focusableInTouchMode="true"
+android:orientation="vertical"
+tools:context="addeditusuario.AddEditUsuarioFragment">
+
+<com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/til_nombre"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/activity_vertical_margin">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/et_nombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre"
+        android:inputType="text"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        tools:text="Dish" />
+</com.google.android.material.textfield.TextInputLayout>
+
+<com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/til_proyect_manager"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/activity_vertical_margin">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/et_proyect_manager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Project Manager"
+        android:inputType="text"
+        tools:text="Proyecto Manager" />
+</com.google.android.material.textfield.TextInputLayout>
+
+<com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/til_descripcion"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/activity_vertical_margin">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/et_descripcion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Descripción"
+        android:inputType="text"
+        tools:text="Bla bla bla" />
+</com.google.android.material.textfield.TextInputLayout>
+
+<com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/til_desarrollador1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/activity_vertical_margin">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/et_desarrollador1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top|start"
+        android:hint="Desarrollador"
+        android:imeOptions="actionDone"
+        android:inputType="textPersonName"
+        tools:text="@string/lorem" />
+</com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_desarrollador2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_desarrollador2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|start"
+            android:hint="Desarrollador"
+            android:imeOptions="actionDone"
+            android:inputType="textPersonName"
+            tools:text="@string/lorem" />
+</com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>
