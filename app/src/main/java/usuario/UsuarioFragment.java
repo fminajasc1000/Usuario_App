@@ -22,7 +22,11 @@ import data.UsuarioDb;
 import data.UsuarioProyecto;
 import addeditusuario.AddEditUsuarioActivity;
 import usuariodetalle.UsuarioDetalleActivity;
-
+/**
+ * Vista para listar a los proyectos disponibles
+ * @version 1.0, 15/05/2021
+ * @author Franciscominajas
+ */
 public class UsuarioFragment extends Fragment {
 
     public static final int REQUEST_UPDATE_DELETE_USUARIO = 2;
@@ -40,7 +44,13 @@ public class UsuarioFragment extends Fragment {
     public static UsuarioFragment newInstance(){
         return new UsuarioFragment();
     }
-
+    /**
+     * obtiene la regerencia de la lista y setea un nvo adaptador de datos
+     * @param inflater
+     * @param  container contenedor
+     * @param savedInstanceState
+     * @return root regresa la vista
+     * */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,7 +91,13 @@ public class UsuarioFragment extends Fragment {
 
         return root;
     }
-
+    /**
+     * Metodo que se utiliza para refrescar a las screen de insercion que hayan provocado
+     * algun cambio
+     * @param requestCode Codigo que indica ADD o DELETE,
+     * @param resultCode Codigo que infica el tipo de respuesta
+     * @param data codigo que contiene la informacion
+     * */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (Activity.RESULT_OK == resultCode) {

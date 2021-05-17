@@ -8,7 +8,11 @@ import usuario.UsuarioActivity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.appcompat.widget.Toolbar;
-
+/**
+ *Activity para agregar y editar
+ * @version 1.0, 15/05/2021
+ * @author Franciscominajas
+ */
 public class AddEditUsuarioActivity extends AppCompatActivity {
 
     public static final int REQUEST_ADD_USUARIO = 1;

@@ -20,7 +20,11 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import model.Usuario;
 import data.UsuarioDb;
-
+/**
+ * Vista para la creación/edicion de un proyecto
+ * @version 1.0, 15/05/2021
+ *  @author Franciscominajas
+ * */
 public class AddEditUsuarioFragment extends Fragment {
 
     private static final String ARG_USUARIO_ID = "arg_usuario_id";

@@ -23,7 +23,11 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import model.Usuario;
 import data.UsuarioDb;
 import addeditusuario.AddEditUsuarioActivity;
-
+/**
+ * Vista para el detalle del usuario
+ * @version 1.0, 15/05/2021
+ * @author Franciscominajas
+ */
 public class UsuarioDetalleFragment extends Fragment {
     /**
      * Atributos del objeto usuario
@@ -121,7 +125,9 @@ public class UsuarioDetalleFragment extends Fragment {
         }
 
     }
-
+    /**
+     * Inicia la actividad del detalle alal punsar el item listado
+     * @param item identificador del item pulsado*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -167,7 +173,12 @@ public class UsuarioDetalleFragment extends Fragment {
         intent.putExtra(UsuarioActivity.EXTRA_USUARIO_ID, mUsuarioId);
         startActivityForResult(intent, UsuarioFragment.REQUEST_UPDATE_DELETE_USUARIO);
     }
-
+    /**
+     * Este estara pendiente de los cambios, y aqui se reportara la requisicion de cambio
+     * @param requestCode codigo de la solicitud
+     * @param data informacion del usuario
+     * @param resultCode resultado del cambio
+     * */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == UsuarioFragment.REQUEST_UPDATE_DELETE_USUARIO) {

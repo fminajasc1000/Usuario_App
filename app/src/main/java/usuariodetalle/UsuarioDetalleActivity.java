@@ -9,9 +9,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
-
+/**
+ * Vista para el detalle del usuario
+ * @version 1.0, 15/05/2021
+ * @author Franciscominajas
+ */
 public class UsuarioDetalleActivity extends AppCompatActivity {
-
+    /**
+     * Se realiza la apertura de la actividad contenedora
+     * y la transaccion de agregacion, esta recibe el id del usuario*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

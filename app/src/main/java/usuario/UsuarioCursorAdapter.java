@@ -21,13 +21,25 @@ public class UsuarioCursorAdapter extends CursorAdapter {
     public UsuarioCursorAdapter(Context context, Cursor c) {
         super(context, c, 0);
     }
-
+    /**
+     * Implementa una nueva vista
+     * @param context contexto de la aplicacion
+     * @param cursor informacion de la db
+     * @param parent Vista
+     * @return View la vista
+     * */
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(context);
         return inflater.inflate(R.layout.list_item_usuario, parent, false);
     }
 
+    /**
+     * Obtiene los valores de las columnas para luego serearlos en los view
+     * @param view vista
+     * @param cursor informacion de la db
+     * @param context contexto
+     * */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         // Referencias UI.

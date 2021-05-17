@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import utils.Apis;
-
+/**
+ * Clase manejadora de la informacion local y remota
+ * @version 1.0, 17/05/2021
+ * @author Franciscominajas
+ * */
 public class UsuarioDb extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Usuario.db";
@@ -57,11 +62,12 @@ public class UsuarioDb extends SQLiteOpenHelper {
                 + UsuarioEntry.DESARROLLADOR2 + " TEXT ,"
                 + "UNIQUE (" + UsuarioEntry.ID + "))");
         //mockData(db);
-        System.out.println("ACA ESTOY--->");
+        /**
+         * Verificacion de la conectividad
+         * */
         metodos = new metodosGenerales();
         if((metodos.isConnectedWifi(contexto) && metodos.isOnline(contexto)) ||
                 (metodos.isConnectedMobile(contexto) && metodos.isOnline(contexto))){
-            System.out.println("CON INTERNET");
             listarUsuarios(db);
 
         }
@@ -80,21 +86,17 @@ public class UsuarioDb extends SQLiteOpenHelper {
     /**
      * Consumo de datos de la API REST*/
     public void listarUsuarios(SQLiteDatabase sqLiteDatabase) {
-        System.out.println("EN LA FUNCION");
 
         usuarioService = Apis.getUsuarioService();
         Call<List<Usuario>>call = usuarioService.getUsuario();
-        System.out.println("EN LA DOS");
+
         call.enqueue(new Callback<List<Usuario>>() {
             @Override
             public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
                 //operacion ok
-                System.out.println("LISTANDO USUARIOS");
+                //obtencion de la info del api-rest e insercion en db
                 listaUsuario = response.body();
-                System.out.println("----> "+listaUsuario.size());
                 for(Usuario u: listaUsuario){
-                    System.out.println(u.toString());
-                    //mockUsuario(sqLiteDatabase,u);
                     mockUsuario(sqLiteDatabase, new Usuario(u.getId(), u.getNombre(), u.getProject(),
                             u.getDescripcion(), u.getDesarrollador1(), u.getDesarrollador2()));
                 }
@@ -161,6 +163,29 @@ public class UsuarioDb extends SQLiteOpenHelper {
      * */
     public long saveUsuario(Usuario usuario) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        metodos = new metodosGenerales();
+        usuarioService = Apis.getUsuarioService();
+
+        if((metodos.isConnectedWifi(contexto) && metodos.isOnline(contexto)) ||
+                (metodos.isConnectedMobile(contexto) && metodos.isOnline(contexto))) {
+
+            Call<Usuario> call = usuarioService.addUsuario(usuario);
+            call.enqueue(new Callback<Usuario>() {
+                @Override
+                public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                    if(response!=null){
+                        Toast.makeText(contexto,"Exito",Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Usuario> call, Throwable t) {
+                    Log.e("Error",t.getMessage());
+                }
+            });
+        }
+        UnSegundo();
         return sqLiteDatabase.insert(
                 UsuarioEntry.TABLE_NAME,
                 null,
