@@ -164,28 +164,8 @@ public class UsuarioDb extends SQLiteOpenHelper {
     public long saveUsuario(Usuario usuario) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
 
-        metodos = new metodosGenerales();
-        usuarioService = Apis.getUsuarioService();
+        agregarUsuario(usuario);
 
-        if((metodos.isConnectedWifi(contexto) && metodos.isOnline(contexto)) ||
-                (metodos.isConnectedMobile(contexto) && metodos.isOnline(contexto))) {
-
-            Call<Usuario> call = usuarioService.addUsuario(usuario);
-            call.enqueue(new Callback<Usuario>() {
-                @Override
-                public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                    if(response.isSuccessful()){
-                        Toast.makeText(contexto,"Exito registro exitoso",Toast.LENGTH_LONG).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Usuario> call, Throwable t) {
-                    Log.e("Error",t.getMessage());
-                }
-            });
-        }
-        UnSegundo();
         return sqLiteDatabase.insert(
                 UsuarioEntry.TABLE_NAME,
                 null,
@@ -198,6 +178,113 @@ public class UsuarioDb extends SQLiteOpenHelper {
      * del usuario
      * */
     public Cursor getAllUsuario() {
+        /**
+        *   Sincronizacion con internet
+         *   METODO QUE SINCRONIZA EL LOCAL CON EL SERVER, EN CASO DE FALTA DE INTERNET,
+         *   SE HACE EN CADA ACTUALIZACION O MODIFICACION DE ALGUN REGISTRO
+        * */
+        //Toast.makeText(contexto,"Inicio de sincronizacion",Toast.LENGTH_LONG).show();
+        if((metodos.isConnectedWifi(contexto) && metodos.isOnline(contexto)) ||
+                (metodos.isConnectedMobile(contexto) && metodos.isOnline(contexto))) {
+            System.out.println("INICIO SINCRONIZANDO");
+            usuarioService = Apis.getUsuarioService();
+            Call<List<Usuario>> call = usuarioService.getUsuario();
+
+            Cursor temporal = getReadableDatabase()
+                    .query(
+                            UsuarioEntry.TABLE_NAME,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null);
+
+            call.enqueue(new Callback<List<Usuario>>() {
+                @Override
+                public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
+                    //operacion ok
+                    //obtencion de la info del api-rest e insercion en db
+                    listaUsuario = response.body();
+                }
+
+                @Override
+                public void onFailure(Call<List<Usuario>> call, Throwable t) {
+                    //operacion no ok
+                    //Log.e("Error: ",t.getMessage());
+                    System.out.println("NOOOOOOOO");
+                }
+            });
+
+
+            List<Usuario> aa = new ArrayList<Usuario>();//contiene la información local
+            while (temporal.moveToNext()) {
+                Usuario aaa = new Usuario(
+                        temporal.getString(1),
+                        temporal.getString(2),
+                        temporal.getString(3),
+                        temporal.getString(4),
+                        temporal.getString(5),
+                        temporal.getString(6)
+                );
+                //System.out.println(aaa.toString());
+                aa.add(aaa);
+            }
+
+            List<Usuario> actualizarServer = new ArrayList<Usuario>();
+            List<Usuario> agregarServer = new ArrayList<Usuario>();
+            List<Usuario> borrarServer = new ArrayList<Usuario>();
+
+            List<Usuario> actualizarLocal = new ArrayList<Usuario>();
+            List<Usuario> agregarLocal = new ArrayList<Usuario>();
+            List<Usuario> borrarLocal = new ArrayList<Usuario>();
+
+
+            for (Usuario uu : listaUsuario) {
+                for (Usuario uuu : aa) {
+                    if (uu.getId().equals(uuu.getId())) {
+                        actualizarServer.add(uuu);//actualizar hacia el server
+                    } else {
+                        borrarServer.add(uuu);
+                        //agregarLocal.add((uuu);
+                    }
+                }
+            }
+
+            for (Usuario uu : aa) {
+                for (Usuario uuu : listaUsuario) {
+                    if (uu.getId().equals(uuu.getId())) {
+                        actualizarLocal.add(uuu); //actualizar hacia el local
+                    } else {
+                        //borrarLocal.add(uuu);
+                        agregarServer.add(uuu);
+                    }
+                }
+            }
+
+            //actualizar info del servidor
+            for (Usuario proceso : actualizarServer) {
+                actualizarServer(proceso, proceso.getId());
+            }
+            //actualizar info del local
+            for (Usuario proceso : actualizarLocal) {
+                getWritableDatabase().update(
+                        UsuarioEntry.TABLE_NAME,
+                        proceso.toContentValues(),
+                        UsuarioEntry.ID + " LIKE ?",
+                        new String[]{proceso.getId()});
+            }
+            //borrar info del servidor
+            for (Usuario proceso : borrarServer) {
+                borrarServer(proceso.getId());
+            }
+            //agregar info del servidor
+            for (Usuario proceso : agregarServer) {
+                agregarUsuario(proceso);
+            }
+            //Toast.makeText(contexto,"Fin sincronizacion",Toast.LENGTH_LONG).show();
+            System.out.println("FIN SINCRONIZACION");
+        }
         return getReadableDatabase()
                 .query(
                         UsuarioEntry.TABLE_NAME,
@@ -230,8 +317,29 @@ public class UsuarioDb extends SQLiteOpenHelper {
      * del usuario
      * */
     public int deleteUsuario(String usuarioId) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        borrarServer(usuarioId);
+        return getWritableDatabase().delete(
+                UsuarioEntry.TABLE_NAME,
+                UsuarioEntry.ID + " LIKE ?",
+                new String[]{usuarioId});
+    }
 
+    /**
+     * metodo para actualizar un usuarios
+     * @return int, regresa el status de la eliminación del objeto
+     * del usuario
+     * */
+    public int updateUsuario(Usuario usuario, String usuarioId) {
+        actualizarServer(usuario, usuarioId);
+        return getWritableDatabase().update(
+                UsuarioEntry.TABLE_NAME,
+                usuario.toContentValues(),
+                UsuarioEntry.ID + " LIKE ?",
+                new String[]{usuarioId}
+        );
+    }
+
+    public void borrarServer(String usuarioId){
         metodos = new metodosGenerales();
         usuarioService = Apis.getUsuarioService();
 
@@ -254,35 +362,46 @@ public class UsuarioDb extends SQLiteOpenHelper {
             });
         }
         UnSegundo();
-        return getWritableDatabase().delete(
-                UsuarioEntry.TABLE_NAME,
-                UsuarioEntry.ID + " LIKE ?",
-                new String[]{usuarioId});
     }
 
-    /**
-     * metodo para actualizar un usuarios
-     * @return int, regresa el status de la eliminación del objeto
-     * del usuario
-     * */
-    public int updateUsuario(Usuario usuario, String usuarioId) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-
+    public void actualizarServer(Usuario usuario, String id){
         metodos = new metodosGenerales();
         usuarioService = Apis.getUsuarioService();
-
-        System.out.println("A--->"+usuarioId);
-        System.out.println("B--->"+usuario.getId());
 
         if((metodos.isConnectedWifi(contexto) && metodos.isOnline(contexto)) ||
                 (metodos.isConnectedMobile(contexto) && metodos.isOnline(contexto))) {
 
-            Call<Usuario> call = usuarioService.updateUsuario(usuario, usuarioId);
+            Call<Usuario> calls = usuarioService.updateUsuario(usuario, id);
+            calls.enqueue(new Callback<Usuario>() {
+                @Override
+                public void onResponse(Call<Usuario> calls, Response<Usuario> response) {
+                    if(response.isSuccessful()){
+                        Toast.makeText(contexto,"Exito registro actualizado",Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Usuario> calls, Throwable t) {
+                    Log.e("Error",t.getMessage());
+                }
+            });
+        }
+        UnSegundo();
+    }
+
+    public void agregarUsuario(Usuario usuario){
+        metodos = new metodosGenerales();
+        usuarioService = Apis.getUsuarioService();
+
+        if((metodos.isConnectedWifi(contexto) && metodos.isOnline(contexto)) ||
+                (metodos.isConnectedMobile(contexto) && metodos.isOnline(contexto))) {
+
+            Call<Usuario> call = usuarioService.addUsuario(usuario);
             call.enqueue(new Callback<Usuario>() {
                 @Override
                 public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                     if(response.isSuccessful()){
-                        Toast.makeText(contexto,"Exito registro actualizado",Toast.LENGTH_LONG).show();
+                        Toast.makeText(contexto,"Exito registro exitoso",Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -293,11 +412,5 @@ public class UsuarioDb extends SQLiteOpenHelper {
             });
         }
         UnSegundo();
-        return getWritableDatabase().update(
-                UsuarioEntry.TABLE_NAME,
-                usuario.toContentValues(),
-                UsuarioEntry.ID + " LIKE ?",
-                new String[]{usuarioId}
-        );
     }
 }
