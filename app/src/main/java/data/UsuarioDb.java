@@ -242,6 +242,33 @@ public class UsuarioDb extends SQLiteOpenHelper {
      * del usuario
      * */
     public int updateUsuario(Usuario usuario, String usuarioId) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        metodos = new metodosGenerales();
+        usuarioService = Apis.getUsuarioService();
+
+        System.out.println("A--->"+usuarioId);
+        System.out.println("B--->"+usuario.getId());
+
+        if((metodos.isConnectedWifi(contexto) && metodos.isOnline(contexto)) ||
+                (metodos.isConnectedMobile(contexto) && metodos.isOnline(contexto))) {
+
+            Call<Usuario> call = usuarioService.updateUsuario(usuario, usuarioId);
+            call.enqueue(new Callback<Usuario>() {
+                @Override
+                public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                    if(response!=null){
+                        Toast.makeText(contexto,"Exito registro actualizado",Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Usuario> call, Throwable t) {
+                    Log.e("Error",t.getMessage());
+                }
+            });
+        }
+        UnSegundo();
         return getWritableDatabase().update(
                 UsuarioEntry.TABLE_NAME,
                 usuario.toContentValues(),

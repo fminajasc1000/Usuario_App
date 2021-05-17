@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 /**
  * Clase donnde se encuentran los metodos de comunicacion
@@ -19,4 +20,7 @@ public interface UsuarioService {
 
     @POST("agregar")
     Call<Usuario> addUsuario(@Body Usuario usuario);
+
+    @POST("actualizar/{id}")
+    Call<Usuario> updateUsuario(@Body Usuario usuario, @Path("id") String id);
 }
