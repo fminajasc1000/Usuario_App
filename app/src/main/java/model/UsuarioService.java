@@ -23,4 +23,7 @@ public interface UsuarioService {
 
     @POST("actualizar/{id}")
     Call<Usuario> updateUsuario(@Body Usuario usuario, @Path("id") String id);
+
+    @POST("eliminar/{id}")
+    Call<Usuario> deleteUsuario(@Path("id") String id);
 }

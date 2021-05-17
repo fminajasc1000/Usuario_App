@@ -174,8 +174,8 @@ public class UsuarioDb extends SQLiteOpenHelper {
             call.enqueue(new Callback<Usuario>() {
                 @Override
                 public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                    if(response!=null){
-                        Toast.makeText(contexto,"Exito",Toast.LENGTH_LONG).show();
+                    if(response.isSuccessful()){
+                        Toast.makeText(contexto,"Exito registro exitoso",Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -229,11 +229,35 @@ public class UsuarioDb extends SQLiteOpenHelper {
      * @return int, regresa el status de la eliminacion
      * del usuario
      * */
-    public int deleteUsuario(String lawyerId) {
+    public int deleteUsuario(String usuarioId) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        metodos = new metodosGenerales();
+        usuarioService = Apis.getUsuarioService();
+
+        if((metodos.isConnectedWifi(contexto) && metodos.isOnline(contexto)) ||
+                (metodos.isConnectedMobile(contexto) && metodos.isOnline(contexto))) {
+
+            Call<Usuario> call = usuarioService.deleteUsuario(usuarioId);
+            call.enqueue(new Callback<Usuario>() {
+                @Override
+                public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                    if(response.isSuccessful()){
+                        Toast.makeText(contexto,"Exito registro borrado",Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Usuario> call, Throwable t) {
+                    Log.e("Error",t.getMessage());
+                }
+            });
+        }
+        UnSegundo();
         return getWritableDatabase().delete(
                 UsuarioEntry.TABLE_NAME,
                 UsuarioEntry.ID + " LIKE ?",
-                new String[]{lawyerId});
+                new String[]{usuarioId});
     }
 
     /**
@@ -257,7 +281,7 @@ public class UsuarioDb extends SQLiteOpenHelper {
             call.enqueue(new Callback<Usuario>() {
                 @Override
                 public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                    if(response!=null){
+                    if(response.isSuccessful()){
                         Toast.makeText(contexto,"Exito registro actualizado",Toast.LENGTH_LONG).show();
                     }
                 }
