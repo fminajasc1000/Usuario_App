@@ -4,11 +4,33 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import data.UsuarioProyecto.UsuarioEntry;
+import model.Usuario;
+import model.UsuarioService;
+import model.metodosGenerales;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import utils.Apis;
 
 public class UsuarioDb extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Usuario.db";
+    /**
+    * Instancia de usuario service
+     * */
+    UsuarioService usuarioService;
+    List<Usuario> listaUsuario = new ArrayList<Usuario>();
+    Context contexto;
+
+    /**
+     * Metodos de conexion a internet*/
+    metodosGenerales metodos;
 
     /**
      * Clase donde se encuentran almacenados los metodos de conexion a internet
@@ -18,7 +40,7 @@ public class UsuarioDb extends SQLiteOpenHelper {
      * */
     public UsuarioDb(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        //this.contexto = context;
+        this.contexto = context;
     }
     /**
      * Se crea la base de datos en caso de no existir
@@ -29,14 +51,65 @@ public class UsuarioDb extends SQLiteOpenHelper {
                 + UsuarioEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + UsuarioEntry.ID + " TEXT NOT NULL,"
                 + UsuarioEntry.NOMBRE + " TEXT NOT NULL,"
-                + UsuarioEntry.PROYECT_MANAGER + " TEXT NOT NULL,"
-                + UsuarioEntry.DESCRIPCION + " TEXT NOT NULL,"
-                + UsuarioEntry.DESARROLLADOR1 + " TEXT NOT NULL,"
-                + UsuarioEntry.DESARROLLADOR2 + " TEXT,"
+                + UsuarioEntry.PROJECT + " TEXT,"
+                + UsuarioEntry.DESCRIPCION + " TEXT,"
+                + UsuarioEntry.DESARROLLADOR1 + " TEXT ,"
+                + UsuarioEntry.DESARROLLADOR2 + " TEXT ,"
                 + "UNIQUE (" + UsuarioEntry.ID + "))");
-        mockData(db);
+        //mockData(db);
+        System.out.println("ACA ESTOY--->");
+        metodos = new metodosGenerales();
+        if((metodos.isConnectedWifi(contexto) && metodos.isOnline(contexto)) ||
+                (metodos.isConnectedMobile(contexto) && metodos.isOnline(contexto))){
+            System.out.println("CON INTERNET");
+            listarUsuarios(db);
+
+        }
+        UnSegundo();
     }
     /**
+     * Un segundo
+     * */
+    private void UnSegundo(){
+        try{
+            Thread.sleep(1000);
+        }catch (InterruptedException e)
+        { }
+    }
+
+    /**
+     * Consumo de datos de la API REST*/
+    public void listarUsuarios(SQLiteDatabase sqLiteDatabase) {
+        System.out.println("EN LA FUNCION");
+
+        usuarioService = Apis.getUsuarioService();
+        Call<List<Usuario>>call = usuarioService.getUsuario();
+        System.out.println("EN LA DOS");
+        call.enqueue(new Callback<List<Usuario>>() {
+            @Override
+            public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
+                //operacion ok
+                System.out.println("LISTANDO USUARIOS");
+                listaUsuario = response.body();
+                System.out.println("----> "+listaUsuario.size());
+                for(Usuario u: listaUsuario){
+                    System.out.println(u.toString());
+                    //mockUsuario(sqLiteDatabase,u);
+                    mockUsuario(sqLiteDatabase, new Usuario(u.getId(), u.getNombre(), u.getProject(),
+                            u.getDescripcion(), u.getDesarrollador1(), u.getDesarrollador2()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Usuario>> call, Throwable t) {
+                //operacion no ok
+                //Log.e("Error: ",t.getMessage());
+                System.out.println("NOOOOOOOO");
+            }
+        });
+    }
+    /**
+     *
      * Datos ficticios
      * */
     private void mockData(SQLiteDatabase sqLiteDatabase) {
