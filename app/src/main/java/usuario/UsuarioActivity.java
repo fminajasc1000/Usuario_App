@@ -28,5 +28,6 @@ public class UsuarioActivity extends AppCompatActivity {
                     .add(R.id.usuario_container, fragment)
                     .commit();
         }
+
     }
 }

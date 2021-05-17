@@ -18,7 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import data.Usuario;
+import model.Usuario;
 import data.UsuarioDb;
 
 public class AddEditUsuarioFragment extends Fragment {
@@ -191,7 +191,7 @@ public class AddEditUsuarioFragment extends Fragment {
 
     private void showUsuario(Usuario usuario){
         mNombreField.setText(usuario.getNombre());
-        mProyectManagerField.setText(usuario.getProyectManager());
+        mProyectManagerField.setText(usuario.getProject());
         mDescripcionField.setText(usuario.getDescripcion());
         mDesarrollador1Field.setText(usuario.getDesarrollador1());
         mDesarrollador2Field.setText(usuario.getDesarrollador2());
@@ -204,6 +204,7 @@ public class AddEditUsuarioFragment extends Fragment {
     }
 
     private class GetUsuarioByIdTask extends AsyncTask<Void, Void, Cursor> {
+
 
         @Override
         protected Cursor doInBackground(Void... voids) {

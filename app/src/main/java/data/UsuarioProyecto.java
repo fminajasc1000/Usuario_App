@@ -14,7 +14,7 @@ public class UsuarioProyecto {
 
         public static final String ID = "id";
         public static final String NOMBRE = "nombre";
-        public static final String PROYECT_MANAGER = "proyectManager";
+        public static final String PROJECT = "project";
         public static final String DESCRIPCION = "descripcion";
         public static final String DESARROLLADOR1 = "desarrollador1";
         public static final String DESARROLLADOR2 = "desarrollador2";

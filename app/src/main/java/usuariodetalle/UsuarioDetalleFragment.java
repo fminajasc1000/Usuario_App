@@ -20,7 +20,7 @@ import usuario.UsuarioActivity;
 import usuario.UsuarioFragment;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
-import data.Usuario;
+import model.Usuario;
 import data.UsuarioDb;
 import addeditusuario.AddEditUsuarioActivity;
 
@@ -93,7 +93,7 @@ public class UsuarioDetalleFragment extends Fragment {
         mCollapsingView.setTitle(usuario.getNombre());
 
         nombre.setText(usuario.getNombre());
-        proyecto.setText(usuario.getProyectManager());
+        proyecto.setText(usuario.getProject());
         descripcion.setText(usuario.getDescripcion());
         desarrollador1.setText(usuario.getDesarrollador1());
         desarrollador2.setText(usuario.getDesarrollador2());
