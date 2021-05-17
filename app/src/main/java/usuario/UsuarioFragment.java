@@ -73,10 +73,10 @@ public class UsuarioFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Cursor currentItem = (Cursor) mUsuarioAdapter.getItem(i);
-                String currentLawyerId = currentItem.getString(
+                String currentUsuarioId = currentItem.getString(
                         currentItem.getColumnIndex(UsuarioProyecto.UsuarioEntry.ID));
 
-                showDetailScreen(currentLawyerId);
+                showDetailScreen(currentUsuarioId);
             }
         });
 
